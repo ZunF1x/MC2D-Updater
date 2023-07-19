@@ -120,7 +120,7 @@ public class MC2DUpdater {
     private List<Downloadable> listFilesToDownloadFromVersion(Version version) {
         List<Downloadable> paths = new ArrayList<>();
 
-        String desktop = this.gameDir.toString() + "/";
+        String desktop = this.gameDir.toString() + "/versions/" + version.getVersionName() + "/";
 
         String response = HttpUtil.sendPostRequest(MC2DUpdater.MC2D_UPDATER_URL, Util.makeArgGroup("version", version.getVersionName()));
         JSONObject jsonResponse = Util.parseObject(response);
