@@ -120,12 +120,13 @@ public class MC2DUpdater {
     private List<Downloadable> listFilesToDownloadFromVersion(Version version) {
         List<Downloadable> paths = new ArrayList<>();
 
-        String desktop = this.gameDir.toString() + "/versions/" + version.getVersionName() + "/";
+        String gamePath = this.gameDir.toString() + "/";
+        String clientPath = this.gameDir.toString() + "/versions/" + version.getVersionName() + "/";
 
         String response = HttpUtil.sendPostRequest(MC2DUpdater.MC2D_UPDATER_URL, Util.makeArgGroup("version", version.getVersionName()));
         JSONObject jsonResponse = Util.parseObject(response);
 
-        File versionJsonFile = new File(desktop + version.getVersionName() + ".json");
+        File versionJsonFile = new File(clientPath + version.getVersionName() + ".json");
 
         if (!versionJsonFile.exists() || (versionJsonFile.exists() && Util.getJSONBoolean(versionJsonFile, "download", true))) {
             JSONArray libraries = (JSONArray) jsonResponse.get("libraries");
@@ -135,7 +136,7 @@ public class MC2DUpdater {
                 String fileName = (String) file.get("name");
                 long size = (Long) file.get("size");
                 String libraryUrl = "https://kyosu.fr/mc2d/updater/versions/" + version.getVersionName() + "/" + jsonResponse.get("libraries_link") + fileName;
-                String destination = desktop + jsonResponse.get("libraries_link") + fileName;
+                String destination = gamePath + jsonResponse.get("libraries_link") + fileName;
 
                 if (!Util.areFilesEquals(destination, libraryUrl))
                     paths.add(new Downloadable(libraryUrl, destination, size, FileType.LIBRARY));
@@ -148,7 +149,7 @@ public class MC2DUpdater {
                 String fileName = (String) file.get("name");
                 long size = (Long) file.get("size");
                 String nativeUrl = "https://kyosu.fr/mc2d/updater/versions/" + version.getVersionName() + "/" + jsonResponse.get("natives_link") + fileName;
-                String destination = desktop + jsonResponse.get("natives_link") + fileName;
+                String destination = gamePath + jsonResponse.get("natives_link") + fileName;
 
                 if (!Util.areFilesEquals(destination, nativeUrl))
                     paths.add(new Downloadable(nativeUrl, destination, size, FileType.NATIVE));
@@ -158,7 +159,7 @@ public class MC2DUpdater {
             String jsonFileName = (String) jsonFile.get("name");
             long jsonFileSize = (Long) jsonFile.get("size");
             String jsonFileUrl = "https://kyosu.fr/mc2d/updater/versions/" + version.getVersionName() + "/" + jsonFileName;
-            String jsonFileDestination = desktop + jsonFileName;
+            String jsonFileDestination = clientPath + jsonFileName;
 
             if (!Util.areFilesEquals(jsonFileDestination, jsonFileUrl))
                 paths.add(new Downloadable(jsonFileUrl, jsonFileDestination, jsonFileSize, FileType.JSON));
@@ -167,7 +168,7 @@ public class MC2DUpdater {
             String clientFileName = (String) clientFile.get("name");
             long clientFileSize = (Long) clientFile.get("size");
             String clientFileUrl = "https://kyosu.fr/mc2d/updater/versions/" + version.getVersionName() + "/" + clientFileName;
-            String clientFileDestination = desktop + clientFileName;
+            String clientFileDestination = clientPath + clientFileName;
 
             if (!Util.areFilesEquals(clientFileDestination, clientFileUrl))
                 paths.add(new Downloadable(clientFileUrl, clientFileDestination, clientFileSize, FileType.CLIENT));
